@@ -126,6 +126,22 @@
                    :c [[7r63 7r62 7r61 7r63 7r62 7r60] [1]           [90 70]]
                    })
 
+  ;; 2nd pattern
+  (pattern-player chord-seq-play-once
+                  (next-measure-beat)
+                  [:a :a :b :a :b]
+                  {:a [[0 1 5 2 3] [8 4 8 4 4] [40 60 50]]
+                   :b [[2 3 1 0]   [4]         [60 40]]
+                   })
+  (pattern-player melody2-play-once
+                  (next-measure-beat)
+                  [:a :a :b :a :c]
+                  {:a [[7r50 7r51 7r55 7r52 7r53] [2 2 1 2 1] [70 90]]
+                   :b [[7r62 7r63 7r61 7r60]      [1]         [70]]
+                   :c [[7r63 7r62 7r65 7r61 7r60] [1 2 1 2 2] [90 70]]
+                   })
+
+
   ;; stop
   (defn pattern-player [play-func beat seq-pats pats])
 )
