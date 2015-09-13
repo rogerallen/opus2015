@@ -1,5 +1,8 @@
 (ns opus2015.utils
-  (:use [overtone.live]))
+  (:use [overtone.studio.midi  :only [midi-find-connected-receiver midi-note-on midi-note-off]]
+        [overtone.music.rhythm :only [metronome]]
+        [overtone.music.time   :only [apply-at]]
+        [opus2015.pitch]))
 
 (def Ω (atom {}))
 (defn Ω-dest!
@@ -33,7 +36,7 @@
   can be any type that note converts (string, keyword or integer) or a
   floating-point value."
   [s n]
-  (let [nt         (if (float? n) n (note n))
+  (let [nt         (if (float? n) n (name->pitch n))
         split-seq  (split-with #(<= % nt) s)
         nt-below   (last (first split-seq))
         nt-above   (first (last split-seq))

@@ -1,5 +1,7 @@
 (ns opus2015.n1
-  (:use [overtone.live :except [overtone.music.pitch]]
+  (:use [overtone.music.rhythm :only [metro-bar]]
+        [overtone.music.time   :only [apply-by]]
+        [overtone.algo.lists   :only [rotate]]
         [opus2015.pitch]
         [opus2015.utils]))
 
@@ -12,7 +14,7 @@
   ([n] (swap! Ω assoc :chan2 n)))
 (defn Ω-field!
   ([] (:field @Ω))
-  ([tonic scale] (swap! Ω assoc :field (scale-field tonic scale))))
+  ([tonic scale] (swap! Ω assoc :field (scale->field tonic scale))))
 (defn Ω-degree!
   ([] (:degree @Ω))
   ([deg] (swap! Ω assoc :degree deg)))
@@ -140,7 +142,6 @@
                    :b [[7r62 7r63 7r61 7r60]      [1]         [70]]
                    :c [[7r63 7r62 7r65 7r61 7r60] [1 2 1 2 2] [90 70]]
                    })
-
 
   ;; stop
   (defn pattern-player [play-func beat seq-pats pats])
