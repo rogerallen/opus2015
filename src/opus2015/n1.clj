@@ -21,7 +21,8 @@
 (defn Ω-root
   [] (nth (Ω-field!) (Ω-degree!)))
 
-(Ω-dest!   "Reaper")
+;;(Ω-dest!   "Reaper")
+(Ω-dest!   "127.0.0.1" 8675)
 (Ω-metro!  92)
 (Ω-chan1!  0)
 (Ω-chan2!  1)
@@ -32,9 +33,9 @@
 (defn quant1 [n]
   (quantize (Ω-field!) n))
 (defn play-note1 [beat dur pitch level]
-  (play-midi-note (Ω-chan1!) beat dur pitch level))
+  (output-note (Ω-chan1!) beat dur pitch level))
 (defn play-note2 [beat dur pitch level]
-  (play-midi-note (Ω-chan2!) beat dur pitch level))
+  (output-note (Ω-chan2!) beat dur pitch level))
 (defn next-measure-beat []
   (* 4 (metro-bar (Ω-metro!))))
 ;;(play-note1 ((Ω-metro!)) 1 50 100)

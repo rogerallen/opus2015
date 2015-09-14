@@ -1,5 +1,5 @@
 (ns opus2015.utils
-  (:use [overtone.studio.midi  :only [midi-find-connected-receiver midi-note-on midi-note-off]]
+  (:use [overtone.osc          :only [osc-client osc-debug osc-send-msg]]
         [overtone.music.rhythm :only [metronome]]
         [overtone.music.time   :only [apply-at]]
         [opus2015.pitch]))
@@ -7,7 +7,7 @@
 (def Ω (atom {}))
 (defn Ω-dest!
   ([] (:dest @Ω)) ; get
-  ([s] (swap! Ω assoc :dest (midi-find-connected-receiver s))))
+  ([addr port] (swap! Ω assoc :dest (osc-client addr port))))
 (defn Ω-metro!
   ([] (:metro @Ω))
   ([tempo] (swap! Ω assoc :metro (metronome tempo))))
@@ -49,12 +49,25 @@
       nt-below
       nt-above)))
 
-(defn play-midi-note
-  "play a midi note at beat for duration with midi pitch midi level on
+(defn output-note-on
+  "output a note-on OSC message to OSC client"
+  [client channel pitch level]
+  (let [pth (format "/vkb_midi/%d/note/%d" channel pitch)]
+    (osc-send-msg client {:path pth :type-tag "i" :args [level]})))
+
+(defn output-note-off
+  "output a note-off OSC message to OSC client"
+  [client channel pitch]
+  (let [pth (format "/vkb_midi/%d/note/%d" channel pitch)]
+    (osc-send-msg client {:path pth :type-tag "i" :args [0]})))
+
+(defn output-note
+  "output a note at beat for duration with midi pitch midi level on
   midi channel"
   [channel beat dur pitch level]
-  (apply-at ((Ω-metro!) beat)         #'midi-note-on  [(Ω-dest!) pitch level channel])
-  (apply-at ((Ω-metro!) (+ beat dur -0.02)) #'midi-note-off [(Ω-dest!) pitch       channel]))
+  (apply-at ((Ω-metro!) beat)               #'output-note-on  [(Ω-dest!) channel pitch level])
+  ;; be ever-so-slightly before the next beat.  Otherwise they will be coincident
+  (apply-at ((Ω-metro!) (+ beat dur -0.02)) #'output-note-off [(Ω-dest!) channel pitch]))
 
 ;; http://mugglinworks.com/chordmapsArchive/images/map1.gif
 ;; http://mugglinworks.com/chordmapsArchive/part3.htm
